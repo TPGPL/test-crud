@@ -5,9 +5,11 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.edu.pw.mwotest.dtos.ClientDto;
 import pl.edu.pw.mwotest.models.Client;
 import pl.edu.pw.mwotest.repositories.ClientRepository;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @Service
@@ -30,15 +32,20 @@ public class ClientService {
         return repository.findAll();
     }
 
-    public Client createClient(Client newClient) {
+    public Client createClient(ClientDto clientDto) {
+        Client newClient = new Client(
+                -1,
+                clientDto.getName(),
+                clientDto.getSurname(),
+                clientDto.getEmail(),
+                new ArrayList<>()
+        );
+
         Set<ConstraintViolation<Client>> violations = validator.validate(newClient);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-
-        newClient.setId(-1);
-        newClient.getOrders().clear();
 
         return repository.save(newClient);
     }
@@ -47,22 +54,22 @@ public class ClientService {
         repository.deleteById(id);
     }
 
-    public Client updateClient(int id, Client updatedClient) {
-        Set<ConstraintViolation<Client>> violations = validator.validate(updatedClient);
-
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-
+    public Client updateClient(int id, ClientDto dto) {
         Client clientToUpdate = repository.findById(id).orElse(null);
 
         if (clientToUpdate == null) {
             throw new IllegalArgumentException(String.format("The client with ID %d was not found - failed to update.", id));
         }
 
-        clientToUpdate.setName(updatedClient.getName());
-        clientToUpdate.setSurname(updatedClient.getSurname());
-        clientToUpdate.setEmail(updatedClient.getEmail());
+        clientToUpdate.setName(dto.getName());
+        clientToUpdate.setSurname(dto.getSurname());
+        clientToUpdate.setEmail(dto.getEmail());
+
+        Set<ConstraintViolation<Client>> violations = validator.validate(clientToUpdate);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
 
         return repository.save(clientToUpdate);
     }
