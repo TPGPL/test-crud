@@ -1,10 +1,12 @@
-package pl.edu.pw.mwotest.clients;
+package pl.edu.pw.mwotest.services;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.edu.pw.mwotest.models.Client;
+import pl.edu.pw.mwotest.repositories.ClientRepository;
 
 import java.util.Set;
 
@@ -34,6 +36,8 @@ public class ClientService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+
+        newClient.setId(-1);
 
         return repository.save(newClient);
     }
