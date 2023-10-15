@@ -38,6 +38,7 @@ public class ClientService {
         }
 
         newClient.setId(-1);
+        newClient.getOrders().clear();
 
         return repository.save(newClient);
     }
