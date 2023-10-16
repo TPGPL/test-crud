@@ -24,7 +24,7 @@ public class Order {
     @Column(name="order_id")
     private int id;
     @NotNull(message = "The order client must not be null.")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     private Client client;
     @NotNull(message = "The order status must not be null.")
