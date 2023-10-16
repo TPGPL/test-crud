@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -26,8 +27,9 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     private Client client;
+    @NotNull(message = "The order status must not be null.")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderStatus status;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderLine> products;
+    private List<OrderLine> products = new ArrayList<>();
 }
