@@ -35,12 +35,6 @@ public class OrderService {
         this.validator = validator;
     }
 
-    // TODO:
-    //  - crud: update = id_klienta + orderLinesy
-    //  - zlozenie zamowienia: sprawdzic czy produkty sa i klient istnieje, i zamowienie w stanie New
-    //      - zmienic stocki produktow
-    //  - anulowanie zamowienia
-
     public Order getOrder(int id) {
         return repository.findById(id).orElse(null);
     }
