@@ -1,8 +1,8 @@
 package pl.edu.pw.mwotest.models;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +30,8 @@ public class Order {
     @NotNull(message = "The order status must not be null.")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderStatus status;
+    @NotNull(message = "The order lines must not be null.")
+    @NotEmpty(message = "The order lines must not be empty.")
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderLine> products = new ArrayList<>();
+    private List<OrderLine> lines = new ArrayList<>();
 }

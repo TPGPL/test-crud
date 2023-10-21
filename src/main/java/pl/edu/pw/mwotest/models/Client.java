@@ -31,7 +31,7 @@ public class Client {
     @Size(min = 2, max = 50, message = "Surname must be between 2 and 50 characters.")
     private String surname;
     @NotNull(message = "Email must not be null.")
-    @Size(min = 2, max = 50, message = "Email must be between 2 and 50 characters.")
+    @Size(min = 7, max = 50, message = "Email must be between 7 and 50 characters.")
     @Email(message = "Email must be in a valid format.")
     private String email;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)

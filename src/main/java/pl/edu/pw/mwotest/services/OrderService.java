@@ -78,10 +78,10 @@ public class OrderService {
                     throw new ConstraintViolationException(lineViolations);
                 }
 
-                newOrder.getProducts().add(line);
+                newOrder.getLines().add(line);
             }
 
-            if (productIds.size() != newOrder.getProducts().size()) {
+            if (productIds.size() != newOrder.getLines().size()) {
                 throw new IllegalArgumentException("Duplicate product lines in order.");
             }
         }
@@ -99,7 +99,7 @@ public class OrderService {
         }
 
         orderToUpdate.setClient(clientService.getClient(dto.getClientId()));
-        orderToUpdate.getProducts().clear();
+        orderToUpdate.getLines().clear();
 
         Set<ConstraintViolation<Order>> violations = validator.validate(orderToUpdate);
         Set<ConstraintViolation<OrderLine>> lineViolations;
@@ -128,10 +128,10 @@ public class OrderService {
                     throw new ConstraintViolationException(lineViolations);
                 }
 
-                orderToUpdate.getProducts().add(line);
+                orderToUpdate.getLines().add(line);
             }
 
-            if (productIds.size() != orderToUpdate.getProducts().size()) {
+            if (productIds.size() != orderToUpdate.getLines().size()) {
                 throw new IllegalArgumentException("Duplicate product lines in order.");
             }
         }
@@ -150,7 +150,7 @@ public class OrderService {
 
         order.setStatus(OrderStatus.InProgress);
 
-        for (OrderLine line : order.getProducts()) {
+        for (OrderLine line : order.getLines()) {
             if (line.getProduct() == null) {
                 throw new IllegalArgumentException("Product in order line cannot be null.");
             }
@@ -175,7 +175,7 @@ public class OrderService {
 
         order.setStatus(OrderStatus.Cancelled);
 
-        for (OrderLine line : order.getProducts()) {
+        for (OrderLine line : order.getLines()) {
             if (line.getProduct() == null) {
                 throw new IllegalArgumentException("Product in order line cannot be null.");
             }

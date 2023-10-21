@@ -28,7 +28,7 @@ public class OrderDto {
         dto.clientId = order.getClient().getId();
         dto.status = order.getStatus();
 
-        for (OrderLine line : order.getProducts()) {
+        for (OrderLine line : order.getLines()) {
             dto.lines.add(OrderLineDto.mapToDto(line));
         }
 
