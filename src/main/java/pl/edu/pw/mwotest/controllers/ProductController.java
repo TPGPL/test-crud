@@ -19,7 +19,7 @@ public class ProductController {
 
     @PostMapping("/products/create")
     public ProductDto create(@RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.createProduct(ProductDto.mapFromDto(dto)));
+        return ProductDto.mapToDto(service.createProduct(service.mapFromDto(dto)));
     }
 
     @GetMapping("/products")
@@ -38,7 +38,7 @@ public class ProductController {
 
     @PatchMapping("/products/{id}")
     public ProductDto update(@PathVariable int id, @RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.updateProduct(id, ProductDto.mapFromDto(dto)));
+        return ProductDto.mapToDto(service.updateProduct(id, service.mapFromDto(dto)));
     }
 
     @DeleteMapping("/products/{id}")
