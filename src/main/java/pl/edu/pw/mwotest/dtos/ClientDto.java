@@ -38,9 +38,9 @@ public class ClientDto {
     public static Client mapFromDto(ClientDto dto) {
         return dto != null ? new Client(
                 -1,
-                dto.getName(),
-                dto.getSurname(),
-                dto.getEmail(),
+                dto.name,
+                dto.surname,
+                dto.email,
                 new ArrayList<>()
         ) : null;
     }
