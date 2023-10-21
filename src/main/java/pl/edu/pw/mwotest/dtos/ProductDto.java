@@ -3,6 +3,8 @@ package pl.edu.pw.mwotest.dtos;
 import lombok.*;
 import pl.edu.pw.mwotest.models.Product;
 
+import java.util.ArrayList;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,5 +26,15 @@ public class ProductDto {
         dto.stockQuantity = product.getStockQuantity();
 
         return dto;
+    }
+
+    public static Product mapFromDto(ProductDto dto) {
+        return dto != null ? new Product(
+                -1,
+                dto.name,
+                dto.price,
+                dto.stockQuantity,
+                new ArrayList<>()
+        ) : null;
     }
 }
