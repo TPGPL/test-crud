@@ -26,6 +26,7 @@ public class OrderController {
     @GetMapping("/orders")
     public List<OrderDto> getAll() {
         List<OrderDto> orders = new ArrayList<>();
+
         service.getAllOrders().forEach((x) -> orders.add(OrderDto.mapToDto(x)));
 
         return orders;
@@ -33,12 +34,12 @@ public class OrderController {
 
     @PostMapping("/orders/create")
     public OrderDto create(@RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.createOrder(dto));
+        return OrderDto.mapToDto(service.createOrder(service.mapFromDto(dto)));
     }
 
     @PatchMapping("/orders/{id}")
     public OrderDto update(@PathVariable int id, @RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.updateOrder(id, dto));
+        return OrderDto.mapToDto(service.updateOrder(id, service.mapFromDto(dto)));
     }
 
     @DeleteMapping("/orders/{id}")
