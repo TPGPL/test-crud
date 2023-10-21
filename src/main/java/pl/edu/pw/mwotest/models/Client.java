@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "Clients")
+@NotNull(message = "The client must not be null.")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

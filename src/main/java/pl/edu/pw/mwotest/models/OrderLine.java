@@ -14,6 +14,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "OrderLines")
+@NotNull(message = "The orderline must not be null.")
 public class OrderLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

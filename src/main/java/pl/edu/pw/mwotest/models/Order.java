@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "Orders")
+@NotNull(message = "The order must not be null.")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
