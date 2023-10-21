@@ -36,12 +36,12 @@ public class ClientDto {
     }
 
     public static Client mapFromDto(ClientDto dto) {
-        return new Client(
+        return dto != null ? new Client(
                 -1,
                 dto.getName(),
                 dto.getSurname(),
                 dto.getEmail(),
                 new ArrayList<>()
-        );
+        ) : null;
     }
 }
