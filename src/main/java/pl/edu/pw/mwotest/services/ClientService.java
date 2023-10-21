@@ -3,8 +3,11 @@ package pl.edu.pw.mwotest.services;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.edu.pw.mwotest.dtos.ClientDto;
 import pl.edu.pw.mwotest.models.Client;
 import pl.edu.pw.mwotest.repositories.ClientRepository;
+
+import java.util.ArrayList;
 
 @Service
 
@@ -44,5 +47,15 @@ public class ClientService {
         clientToUpdate.setEmail(client.getEmail());
 
         return repository.save(clientToUpdate);
+    }
+
+    public Client mapFromDto(ClientDto dto) {
+        return dto != null ? new Client(
+                -1,
+                dto.getName(),
+                dto.getSurname(),
+                dto.getEmail(),
+                new ArrayList<>()
+        ) : null;
     }
 }

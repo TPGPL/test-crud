@@ -34,14 +34,4 @@ public class ClientDto {
 
         return dto;
     }
-
-    public static Client mapFromDto(ClientDto dto) {
-        return dto != null ? new Client(
-                -1,
-                dto.name,
-                dto.surname,
-                dto.email,
-                new ArrayList<>()
-        ) : null;
-    }
 }

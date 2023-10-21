@@ -19,7 +19,7 @@ public class ClientController {
 
     @PostMapping("/clients/create")
     public ClientDto create(@RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.createClient(ClientDto.mapFromDto(clientDto)));
+        return ClientDto.mapToDto(service.createClient(service.mapFromDto(clientDto)));
     }
 
     @GetMapping("/clients")
@@ -38,7 +38,7 @@ public class ClientController {
 
     @PatchMapping("/clients/{id}")
     public ClientDto update(@PathVariable int id, @RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.updateClient(id, ClientDto.mapFromDto(clientDto)));
+        return ClientDto.mapToDto(service.updateClient(id, service.mapFromDto(clientDto)));
     }
 
     @DeleteMapping("/clients/{id}")
