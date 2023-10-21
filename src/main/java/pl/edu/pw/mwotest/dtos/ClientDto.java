@@ -34,4 +34,14 @@ public class ClientDto {
 
         return dto;
     }
+
+    public static Client mapFromDto(ClientDto dto) {
+        return new Client(
+                -1,
+                dto.getName(),
+                dto.getSurname(),
+                dto.getEmail(),
+                new ArrayList<>()
+        );
+    }
 }

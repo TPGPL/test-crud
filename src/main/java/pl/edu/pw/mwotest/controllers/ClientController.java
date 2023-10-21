@@ -19,12 +19,13 @@ public class ClientController {
 
     @PostMapping("/clients/create")
     public ClientDto create(@RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.createClient(clientDto));
+        return ClientDto.mapToDto(service.createClient(ClientDto.mapFromDto(clientDto)));
     }
 
     @GetMapping("/clients")
     public List<ClientDto> getAll() {
         List<ClientDto> clients = new ArrayList<>();
+
         service.getAllClients().forEach((x) -> clients.add(ClientDto.mapToDto(x)));
 
         return clients;
@@ -37,7 +38,7 @@ public class ClientController {
 
     @PatchMapping("/clients/{id}")
     public ClientDto update(@PathVariable int id, @RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.updateClient(id, clientDto));
+        return ClientDto.mapToDto(service.updateClient(id, ClientDto.mapFromDto(clientDto)));
     }
 
     @DeleteMapping("/clients/{id}")
