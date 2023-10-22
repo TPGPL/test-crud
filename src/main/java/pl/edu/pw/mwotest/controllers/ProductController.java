@@ -17,7 +17,7 @@ public class ProductController {
         this.service = service;
     }
 
-    @PostMapping("/products/create")
+    @PostMapping("/products")
     public ProductDto create(@RequestBody ProductDto dto) {
         return ProductDto.mapToDto(service.createProduct(service.mapFromDto(dto)));
     }

@@ -32,7 +32,7 @@ public class OrderController {
         return orders;
     }
 
-    @PostMapping("/orders/create")
+    @PostMapping("/orders")
     public OrderDto create(@RequestBody OrderDto dto) {
         return OrderDto.mapToDto(service.createOrder(service.mapFromDto(dto)));
     }

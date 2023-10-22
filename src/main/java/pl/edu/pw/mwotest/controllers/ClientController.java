@@ -17,7 +17,7 @@ public class ClientController {
         this.service = service;
     }
 
-    @PostMapping("/clients/create")
+    @PostMapping("/clients")
     public ClientDto create(@RequestBody ClientDto clientDto) {
         return ClientDto.mapToDto(service.createClient(service.mapFromDto(clientDto)));
     }
