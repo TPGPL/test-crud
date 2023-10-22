@@ -1,6 +1,8 @@
 package pl.edu.pw.mwotest.services;
 
-import jakarta.validation.Valid;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.mwotest.dtos.ProductDto;
@@ -8,14 +10,17 @@ import pl.edu.pw.mwotest.models.Product;
 import pl.edu.pw.mwotest.repositories.ProductRepository;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 @Service
 public class ProductService {
     private final ProductRepository repository;
+    private final Validator validator;
 
     @Autowired
-    public ProductService(ProductRepository repository) {
+    public ProductService(ProductRepository repository, Validator validator) {
         this.repository = repository;
+        this.validator = validator;
     }
 
     public Product getProduct(int id) {
@@ -30,11 +35,17 @@ public class ProductService {
         repository.deleteById(id);
     }
 
-    public Product createProduct(@Valid Product product) {
+    public Product createProduct(Product product) {
+        Set<ConstraintViolation<Product>> violations = validator.validate(product);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
         return repository.save(product);
     }
 
-    public Product updateProduct(int id, @Valid Product product) {
+    public Product updateProduct(int id, Product product) {
         var productToUpdate = repository.findById(id).orElse(null);
 
         if (productToUpdate == null) {
@@ -44,6 +55,12 @@ public class ProductService {
         productToUpdate.setName(product.getName());
         productToUpdate.setPrice(product.getPrice());
         productToUpdate.setStockQuantity(product.getStockQuantity());
+
+        Set<ConstraintViolation<Product>> violations = validator.validate(productToUpdate);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
 
         return repository.save(productToUpdate);
     }

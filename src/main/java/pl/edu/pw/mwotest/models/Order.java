@@ -32,7 +32,8 @@ public class Order {
     @NotNull(message = "The order status must not be null.")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderStatus status;
+    @Valid
     @NotNull(message = "The order lines must not be null.")
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderLine> lines = new ArrayList<>();
+    private List<@Valid OrderLine> lines = new ArrayList<>();
 }

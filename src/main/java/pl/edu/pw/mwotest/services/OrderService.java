@@ -1,6 +1,8 @@
 package pl.edu.pw.mwotest.services;
 
-import jakarta.validation.Valid;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.mwotest.dtos.OrderDto;
@@ -20,14 +22,17 @@ public class OrderService {
     private final OrderRepository repository;
     private final ProductService productService;
     private final ClientService clientService;
+    private final Validator validator;
 
     @Autowired
     public OrderService(OrderRepository repository,
                         ProductService productService,
-                        ClientService clientService) {
+                        ClientService clientService,
+                        Validator validator) {
         this.repository = repository;
         this.productService = productService;
         this.clientService = clientService;
+        this.validator = validator;
     }
 
     public Order getOrder(int id) {
@@ -38,15 +43,21 @@ public class OrderService {
         return repository.findAll();
     }
 
-    public Order createOrder(@Valid Order order) {
+    public Order createOrder(Order order) {
         if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
+
+        Set<ConstraintViolation<Order>> violations = validator.validate(order);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
 
         checkForDuplicateOrderLines(order);
 
         return repository.save(order);
     }
 
-    public Order updateOrder(int id, @Valid Order order) {
+    public Order updateOrder(int id, Order order) {
         if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
 
         Order orderToUpdate = repository.findById(id).orElse(null);
@@ -55,6 +66,12 @@ public class OrderService {
             throw new IllegalArgumentException(String.format("The client with ID %d was not found - failed to update.", id));
         } else if (orderToUpdate.getStatus() != OrderStatus.New) {
             throw new IllegalArgumentException("Given order to update is in wrong state: " + orderToUpdate.getStatus());
+        }
+
+        Set<ConstraintViolation<Order>> violations = validator.validate(order);
+
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
         }
 
         order.setId(orderToUpdate.getId());
@@ -159,8 +176,6 @@ public class OrderService {
         Set<Integer> productIds = new HashSet<>();
 
         for (var line : order.getLines()) {
-            if (line.getProduct() == null) return;
-
             productIds.add(line.getProduct().getId());
         }
 
