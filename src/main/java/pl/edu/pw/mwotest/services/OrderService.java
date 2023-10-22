@@ -39,12 +39,16 @@ public class OrderService {
     }
 
     public Order createOrder(@Valid Order order) {
+        if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
+
         checkForDuplicateOrderLines(order);
 
         return repository.save(order);
     }
 
     public Order updateOrder(int id, @Valid Order order) {
+        if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
+
         Order orderToUpdate = repository.findById(id).orElse(null);
 
         if (orderToUpdate == null) {
@@ -155,6 +159,8 @@ public class OrderService {
         Set<Integer> productIds = new HashSet<>();
 
         for (var line : order.getLines()) {
+            if (line.getProduct() == null) return;
+
             productIds.add(line.getProduct().getId());
         }
 
