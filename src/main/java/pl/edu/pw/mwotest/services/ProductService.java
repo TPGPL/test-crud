@@ -9,7 +9,6 @@ import pl.edu.pw.mwotest.dtos.ProductDto;
 import pl.edu.pw.mwotest.models.Product;
 import pl.edu.pw.mwotest.repositories.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.Set;
 
 @Service
@@ -70,8 +69,7 @@ public class ProductService {
                 -1,
                 dto.getName(),
                 dto.getPrice(),
-                dto.getStockQuantity(),
-                new ArrayList<>()
+                dto.getStockQuantity()
         ) : null;
     }
 }
