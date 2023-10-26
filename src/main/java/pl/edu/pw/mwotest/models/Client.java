@@ -34,6 +34,7 @@ public class Client {
     @NotNull(message = "Email must not be null.")
     @Size(min = 7, max = 50, message = "Email must be between 7 and 50 characters.")
     @Email(message = "Email must be in a valid format.")
+    @Column(unique = true, nullable = false)
     private String email;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
