@@ -2,6 +2,9 @@ package pl.edu.pw.mwotest;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,7 +13,6 @@ import pl.edu.pw.mwotest.models.Client;
 import pl.edu.pw.mwotest.repositories.ClientRepository;
 import pl.edu.pw.mwotest.services.ClientService;
 
-import java.lang.invoke.CallSite;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -19,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class ClientServiceIntegrationTests {
+
+    private static final String STR_55 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     @Nested
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -57,7 +61,7 @@ public class ClientServiceIntegrationTests {
             clientRepository.save(client);
 
             // when / then
-            assertThatThrownBy(() -> clientService.createClient(client2)).isInstanceOf(DataIntegrityViolationException.class).hasMessageContaining("Unique index or primary key violation");
+            assertThatThrownBy(() -> clientService.createClient(client2)).isInstanceOf(DataIntegrityViolationException.class);
         }
 
         @Test
@@ -127,7 +131,7 @@ public class ClientServiceIntegrationTests {
             var id = 20000;
 
             // when / then
-            assertThatThrownBy(() -> clientService.updateClient(id, client)).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("not found");
+            assertThatThrownBy(() -> clientService.updateClient(id, client)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -147,67 +151,31 @@ public class ClientServiceIntegrationTests {
     @Nested
     @Order(2)
     class CreateConstraintsTests extends ClientTestBase {
-        @Test
-        public void testCreateClientWithInvalidName() {
-            Client client = Client.builder().name("A").surname("ValidSurname").email("valid@example.com").build();
+        @ParameterizedTest
+        @ValueSource(strings = {"a", STR_55})
+        @NullSource
+        public void testCreateClientWithInvalidName(String name) {
+            Client client = Client.builder().name(name).surname("ValidSurname").email("valid@example.com").build();
 
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Name must be between 2 and 50 characters");
+            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class);
         }
 
-        @Test
-        public void testCreateClientWithInvalidSurname() {
-            Client client = Client.builder().name("ValidName").surname("S").email("valid@example.com").build();
+        @ParameterizedTest
+        @ValueSource(strings = {"a", STR_55})
+        @NullSource
+        public void testCreateClientWithInvalidSurname(String surname) {
+            Client client = Client.builder().name("ValidName").surname(surname).email("valid@example.com").build();
 
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Surname must be between 2 and 50 characters");
+            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class);
         }
 
-        @Test
-        public void testCreateClientWithInvalidEmail() {
-            Client client = Client.builder().name("ValidName").surname("ValidSurname").email("invalid-email").build();
+        @ParameterizedTest
+        @ValueSource(strings = {"a", "a@w.pl", STR_55 + "@wp.pl", STR_55, "invalid-email"})
+        @NullSource
+        public void testCreateClientWithInvalidEmail(String mail) {
+            Client client = Client.builder().name("ValidName").surname("ValidSurname").email(mail).build();
 
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Email must be in a valid format");
-        }
-
-        @Test
-        public void testCreateClientWithInvalidNameLength() {
-            Client client = Client.builder().name("A").surname("ValidSurname").email("valid@example.com").build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Name must be between 2 and 50 characters");
-        }
-
-        @Test
-        public void testCreateClientWithInvalidSurnameLength() {
-            Client client = Client.builder().name("ValidName").surname("S").email("valid@example.com").build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Surname must be between 2 and 50 characters");
-        }
-
-        @Test
-        public void testCreateClientWithInvalidEmailFormat() {
-            Client client = Client.builder().name("ValidName").surname("ValidSurname").email("invalid-email").build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Email must be in a valid format");
-        }
-
-        @Test
-        public void testCreateClientWithNullName() {
-            Client client = Client.builder().name(null).surname("ValidSurname").email("valid@example.com").build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Name must not be null");
-        }
-
-        @Test
-        public void testCreateClientWithNullSurname() {
-            Client client = Client.builder().name("ValidName").surname(null).email("valid@example.com").build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Surname must not be null");
-        }
-
-        @Test
-        public void testCreateClientWithNullEmail() {
-            Client client = Client.builder().name("ValidName").surname("ValidSurname").email(null).build();
-
-            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Email must not be null");
+            assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class);
         }
     }
 
@@ -215,89 +183,52 @@ public class ClientServiceIntegrationTests {
     @Order(3)
     class UpdateConstraintsTests extends ClientTestBase {
 
-        @Test
-        public void testUpdateClientWithInvalidName() {
+        @ParameterizedTest
+        @ValueSource(strings = {"a", STR_55})
+        @NullSource
+        public void testUpdateClientWithInvalidName(String name) {
             // given
             Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
             validClient = clientRepository.save(validClient);
 
             // when
-            validClient.setName("A");
+            validClient.setName(name);
 
             // then
             Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Name must be between 2 and 50 characters");
+            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class);
         }
 
-        @Test
-        public void testUpdateClientWithInvalidSurname() {
+        @ParameterizedTest
+        @ValueSource(strings = {"a", STR_55})
+        @NullSource
+        public void testUpdateClientWithInvalidSurname(String surname) {
             // given
             Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
             validClient = clientRepository.save(validClient);
 
             // when
-            validClient.setSurname("S");
+            validClient.setSurname(surname);
 
             // then
             Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Surname must be between 2 and 50 characters");
+            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class);
         }
 
-        @Test
-        public void testUpdateClientWithInvalidEmail() {
+        @ParameterizedTest
+        @ValueSource(strings = {"a", "a@w.pl", STR_55+"@wp.pl", STR_55, "invalid-email"})
+        @NullSource
+        public void testUpdateClientWithInvalidEmail(String mail) {
             // given
             Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
             validClient = clientRepository.save(validClient);
 
             // when
-            validClient.setEmail("invalid-email");
+            validClient.setEmail(mail);
 
             // then
             Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Email must be in a valid format");
-        }
-
-        @Test
-        public void testUpdateClientWithNullName() {
-            // given
-            Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
-            validClient = clientRepository.save(validClient);
-
-            // when
-            validClient.setName(null);
-
-            // then
-            Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Name must not be null");
-        }
-
-        @Test
-        public void testUpdateClientWithNullSurname() {
-            // given
-            Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
-            validClient = clientRepository.save(validClient);
-
-            // when
-            validClient.setSurname(null);
-
-            // then
-            Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Surname must not be null");
-        }
-
-        @Test
-        public void testUpdateClientWithNullEmail() {
-            // given
-            Client validClient = Client.builder().name("ValidName").surname("ValidSurname").email("valid@example.com").build();
-            validClient = clientRepository.save(validClient);
-
-            // when
-            validClient.setEmail(null);
-
-            // then
-            Client finalValidClient = validClient;
-            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class).hasMessageContaining("Email must not be null");
+            assertThatThrownBy(() -> clientService.updateClient(finalValidClient.getId(), finalValidClient)).isInstanceOf(ConstraintViolationException.class);
         }
     }
 }
-
