@@ -44,8 +44,6 @@ public class OrderService {
     }
 
     public Order createOrder(Order order) {
-        if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
-
         Set<ConstraintViolation<Order>> violations = validator.validate(order);
 
         if (!violations.isEmpty()) {
@@ -58,8 +56,6 @@ public class OrderService {
     }
 
     public Order updateOrder(int id, Order order) {
-        if (order.getLines().isEmpty()) throw new IllegalArgumentException("The order lines must not be empty.");
-
         Order orderToUpdate = repository.findById(id).orElse(null);
 
         if (orderToUpdate == null) {

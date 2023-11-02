@@ -1,8 +1,7 @@
 package pl.edu.pw.mwotest;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -178,9 +177,63 @@ public class OrderServiceIntegrationTests {
             var id = 2317;
 
             // when / then
-            assertThatNoException().isThrownBy(() -> {
-                orderService.deleteOrder(id);
-            });
+            assertThatNoException().isThrownBy(() -> orderService.deleteOrder(id));
+        }
+    }
+
+    @Nested
+    @org.junit.jupiter.api.Order(2)
+    class CreateConstraintsTests extends OrderTestBase {
+        @Test
+        public void createOrderWithNullClient() {
+            // given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(null).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(order);
+
+            // when / then
+            assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void createOrderWithNullOrderLines() {
+            // given
+            Order order = Order.builder().client(client).status(OrderStatus.New).lines(null).build();
+
+            // when / then
+            assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void createOrderWithEmptyOrderLines() {
+            // given
+            Order order = Order.builder().client(client).status(OrderStatus.New).build();
+
+            // when / then
+            assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void createOrderWithNullOrderLine() {
+            // given
+            Order order = Order.builder().client(client).status(OrderStatus.New).line(null).build();
+
+            // when / then
+            assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void createOrderWithDuplicatedOrderLines() {
+            // given
+            OrderLine orderLine1 = OrderLine.builder().product(product).quantity(10).build();
+            OrderLine orderLine2 = OrderLine.builder().product(product).quantity(13).build();
+
+            Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine1).line(orderLine2).build();
+            orderLine1.setOrder(order);
+            orderLine2.setOrder(order);
+
+            // when / then
+            assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -32,9 +33,10 @@ public class Order {
     private OrderStatus status;
     @Valid
     @NotNull(message = "The order lines must not be null.")
+    @NotEmpty(message = "The order lines must not be empty")
+    @Singular(ignoreNullCollections = true)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Singular
-    private List<@Valid OrderLine> lines = new ArrayList<>();
+    private List<@Valid @NotNull OrderLine> lines = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
