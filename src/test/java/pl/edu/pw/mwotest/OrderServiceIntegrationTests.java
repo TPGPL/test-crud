@@ -247,14 +247,13 @@ public class OrderServiceIntegrationTests {
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
             orderLine.setOrder(validOrder);
-            validOrder = orderRepository.save(validOrder);
+            var id = orderRepository.save(validOrder).getId();
 
             // when
-            validOrder.setClient(null);
+            Order invalidOrder = validOrder.toBuilder().client(null).build();
 
             // then
-            Order finalUpdatedOrder = validOrder;
-            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+            assertThatThrownBy(() -> orderService.updateOrder(id, invalidOrder)).isInstanceOf(ConstraintViolationException.class);
         }
 
         @Test
@@ -263,14 +262,15 @@ public class OrderServiceIntegrationTests {
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
             orderLine.setOrder(validOrder);
-            validOrder = orderRepository.save(validOrder);
+            var id = orderRepository.save(validOrder).getId();
 
             // when
-            validOrder.setLines(null);
+            Order invalidOrder = validOrder.toBuilder().build();
+            invalidOrder.setLines(null);
 
             // then
-            Order finalUpdatedOrder = validOrder;
-            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);        }
+            assertThatThrownBy(() -> orderService.updateOrder(id, invalidOrder)).isInstanceOf(ConstraintViolationException.class);
+        }
 
         @Test
         public void updateOrderWithEmptyOrderLines() {
@@ -278,14 +278,14 @@ public class OrderServiceIntegrationTests {
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
             orderLine.setOrder(validOrder);
-            validOrder = orderRepository.save(validOrder);
+            var id = orderRepository.save(validOrder).getId();
 
             // when
-            validOrder.setLines(new ArrayList<>());
+            Order invalidOrder = validOrder.toBuilder().build();
+            invalidOrder.setLines(new ArrayList<>());
 
             // then
-            Order finalUpdatedOrder = validOrder;
-            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+            assertThatThrownBy(() -> orderService.updateOrder(id, invalidOrder)).isInstanceOf(ConstraintViolationException.class);
         }
 
         @Test
@@ -294,14 +294,13 @@ public class OrderServiceIntegrationTests {
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
             orderLine.setOrder(validOrder);
-            validOrder = orderRepository.save(validOrder);
+            var id = orderRepository.save(validOrder).getId();
 
             // when
-            validOrder = validOrder.toBuilder().line(null).build();
+            Order invalidOrder = validOrder.toBuilder().line(null).build();
 
             // then
-            Order finalUpdatedOrder = validOrder;
-            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+            assertThatThrownBy(() -> orderService.updateOrder(id, invalidOrder)).isInstanceOf(ConstraintViolationException.class);
         }
 
         @Test
@@ -310,15 +309,14 @@ public class OrderServiceIntegrationTests {
             OrderLine orderLine1 = OrderLine.builder().product(product).quantity(10).build();
             Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine1).build();
             orderLine1.setOrder(validOrder);
-            validOrder = orderRepository.save(validOrder);
+            var id = orderRepository.save(validOrder).getId();
 
             // when
             OrderLine orderLine2 = OrderLine.builder().product(product).order(validOrder).quantity(13).build();
-            validOrder = validOrder.toBuilder().line(orderLine2).build();
+            Order invalidOrder = validOrder.toBuilder().line(orderLine2).build();
 
-            // when / then
-            Order finalUpdatedOrder = validOrder;
-            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(IllegalArgumentException.class);
+            // then
+            assertThatThrownBy(() -> orderService.updateOrder(id, invalidOrder)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
