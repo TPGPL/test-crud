@@ -18,6 +18,7 @@ import pl.edu.pw.mwotest.services.ProductService;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,7 +94,7 @@ public class OrderServiceIntegrationTests {
         }
 
         @Test
-        public void readNonExistentProductById() {
+        public void readNonExistentOrderById() {
             // given
             var id = 1;
 
@@ -169,6 +170,17 @@ public class OrderServiceIntegrationTests {
 
             // then
             assertFalse(orderRepository.existsById(id));
+        }
+
+        @Test
+        public void deleteNonExistentOrder() {
+            // given
+            var id = 2317;
+
+            // when / then
+            assertThatNoException().isThrownBy(() -> {
+                orderService.deleteOrder(id);
+            });
         }
     }
 }
