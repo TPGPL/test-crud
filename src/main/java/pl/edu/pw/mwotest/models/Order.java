@@ -16,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Builder
+@Builder(toBuilder=true)
 @Table(name = "Orders")
 @NotNull(message = "The order must not be null.")
 public class Order {
@@ -36,7 +36,7 @@ public class Order {
     @NotEmpty(message = "The order lines must not be empty")
     @Singular(ignoreNullCollections = true)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<@Valid @NotNull OrderLine> lines = new ArrayList<>();
+    private List<@Valid @NotNull OrderLine> lines;
 
     @Override
     public boolean equals(Object o) {

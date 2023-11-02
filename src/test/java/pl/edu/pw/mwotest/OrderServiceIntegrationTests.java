@@ -15,6 +15,7 @@ import pl.edu.pw.mwotest.services.ClientService;
 import pl.edu.pw.mwotest.services.OrderService;
 import pl.edu.pw.mwotest.services.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
@@ -234,6 +235,90 @@ public class OrderServiceIntegrationTests {
 
             // when / then
             assertThatThrownBy(() -> orderService.createOrder(order)).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    @org.junit.jupiter.api.Order(3)
+    class UpdateConstraintsTests extends OrderTestBase {
+        @Test
+        public void updateOrderWithNullClient() {
+            // given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(validOrder);
+            validOrder = orderRepository.save(validOrder);
+
+            // when
+            validOrder.setClient(null);
+
+            // then
+            Order finalUpdatedOrder = validOrder;
+            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void updateOrderWithNullOrderLines() {
+            // given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(validOrder);
+            validOrder = orderRepository.save(validOrder);
+
+            // when
+            validOrder.setLines(null);
+
+            // then
+            Order finalUpdatedOrder = validOrder;
+            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);        }
+
+        @Test
+        public void updateOrderWithEmptyOrderLines() {
+            // given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(validOrder);
+            validOrder = orderRepository.save(validOrder);
+
+            // when
+            validOrder.setLines(new ArrayList<>());
+
+            // then
+            Order finalUpdatedOrder = validOrder;
+            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void updateOrderWithNullOrderLine() {
+            // given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(validOrder);
+            validOrder = orderRepository.save(validOrder);
+
+            // when
+            validOrder = validOrder.toBuilder().line(null).build();
+
+            // then
+            Order finalUpdatedOrder = validOrder;
+            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+        @Test
+        public void updateOrderWithDuplicatedOrderLines() {
+            // given
+            OrderLine orderLine1 = OrderLine.builder().product(product).quantity(10).build();
+            Order validOrder = Order.builder().client(client).status(OrderStatus.New).line(orderLine1).build();
+            orderLine1.setOrder(validOrder);
+            validOrder = orderRepository.save(validOrder);
+
+            // when
+            OrderLine orderLine2 = OrderLine.builder().product(product).order(validOrder).quantity(13).build();
+            validOrder = validOrder.toBuilder().line(orderLine2).build();
+
+            // when / then
+            Order finalUpdatedOrder = validOrder;
+            assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
