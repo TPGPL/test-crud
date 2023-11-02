@@ -321,4 +321,11 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.updateOrder(finalUpdatedOrder.getId(), finalUpdatedOrder)).isInstanceOf(IllegalArgumentException.class);
         }
     }
+
+    @Nested
+    @org.junit.jupiter.api.Order(4)
+    class OrderFlowTests {
+        // Tests for submit, cancel and complete methods of OrderService
+        // Masa's code goes here
+    }
 }
