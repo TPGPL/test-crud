@@ -22,7 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class ClientServiceIntegrationTests {
 
-    private static final String STR_55 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    private static final String STR_45 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    private static final String STR_50 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+
 
     @Nested
     @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -152,7 +154,7 @@ public class ClientServiceIntegrationTests {
     @Order(2)
     class CreateConstraintsTests extends ClientTestBase {
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_55})
+        @ValueSource(strings = {"a", STR_50+"a"})
         @NullSource
         public void testCreateClientWithInvalidName(String name) {
             Client client = Client.builder().name(name).surname("ValidSurname").email("valid@example.com").build();
@@ -161,7 +163,7 @@ public class ClientServiceIntegrationTests {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_55})
+        @ValueSource(strings = {"a", STR_50+"a"})
         @NullSource
         public void testCreateClientWithInvalidSurname(String surname) {
             Client client = Client.builder().name("ValidName").surname(surname).email("valid@example.com").build();
@@ -170,12 +172,37 @@ public class ClientServiceIntegrationTests {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", "a@w.pl", STR_55 + "@wp.pl", STR_55, "invalid-email"})
+        @ValueSource(strings = {"a", "a@w.pl", STR_45 +"@6c.pl", "invalid-email", "invalid-email@", "invalid-email@.pl"})
         @NullSource
         public void testCreateClientWithInvalidEmail(String mail) {
             Client client = Client.builder().name("ValidName").surname("ValidSurname").email(mail).build();
 
             assertThatThrownBy(() -> clientService.createClient(client)).isInstanceOf(ConstraintViolationException.class);
+        }
+
+
+        @ParameterizedTest
+        @ValueSource(strings = {"aa", STR_50, "Andrzej"})
+        public void testCreateClientWithValidName(String name) {
+            Client client = Client.builder().name(name).surname("ValidSurname").email("valid@example.com").build();
+
+            assertDoesNotThrow(() -> clientService.createClient(client));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"aa", STR_50, "Andrzejewski"})
+        public void testCreateClientWithValidSurname(String surname) {
+            Client client = Client.builder().name("ValidName").surname(surname).email("valid@example.com").build();
+
+            assertDoesNotThrow(() -> clientService.createClient(client));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"a@7c.pl", STR_45+"@p.pl", "andrzej@json.pl", "lubie@localhost"})
+        public void testCreateClientWithValidEmail(String mail) {
+            Client client = Client.builder().name("ValidName").surname("ValidSurname").email(mail).build();
+
+            assertDoesNotThrow(() -> clientService.createClient(client));
         }
     }
 
@@ -184,7 +211,7 @@ public class ClientServiceIntegrationTests {
     class UpdateConstraintsTests extends ClientTestBase {
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_55})
+        @ValueSource(strings = {"a", STR_50+"a"})
         @NullSource
         public void testUpdateClientWithInvalidName(String name) {
             // given
@@ -200,7 +227,7 @@ public class ClientServiceIntegrationTests {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_55})
+        @ValueSource(strings = {"a", STR_50+"a"})
         @NullSource
         public void testUpdateClientWithInvalidSurname(String surname) {
             // given
@@ -216,7 +243,7 @@ public class ClientServiceIntegrationTests {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", "a@w.pl", STR_55+"@wp.pl", STR_55, "invalid-email"})
+        @ValueSource(strings = {"a", "a@w.pl", STR_45 +"@6c.pl", "invalid-email", "invalid-email@", "invalid-email@.pl"})
         @NullSource
         public void testUpdateClientWithInvalidEmail(String mail) {
             // given
