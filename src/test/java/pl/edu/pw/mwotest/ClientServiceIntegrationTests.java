@@ -172,7 +172,7 @@ public class ClientServiceIntegrationTests {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", "a@w.pl", STR_45 +"@6c.pl", "invalid-email", "invalid-email@", "invalid-email@.pl"})
+        @ValueSource(strings = {"a", "a@w.pl", STR_45 + "@6c.pl", "invalid-email", "invalid-email@", "invalid-email@.pl"})
         @NullSource
         public void testCreateClientWithInvalidEmail(String mail) {
             Client client = Client.builder().name("ValidName").surname("ValidSurname").email(mail).build();
