@@ -211,7 +211,7 @@ public class ClientServiceIntegrationTests {
     class UpdateConstraintsTests extends ClientTestBase {
 
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_50+"a"})
+        @ValueSource(strings = {"a", STR_50 + "a"})
         @NullSource
         public void testUpdateClientWithInvalidName(String name) {
             // given
