@@ -2,6 +2,8 @@ package pl.edu.pw.mwotest;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -326,7 +328,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void cancelOrderSuccesfully() {
-
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order order = Order.builder().client(client).status(OrderStatus.InProgress).line(orderLine).build();
@@ -343,7 +344,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void cancelNonExistingOrder() {
-
             //given
             var id = 80085;
 
@@ -354,12 +354,12 @@ public class OrderServiceIntegrationTests {
 
         }
 
-        @Test
-        public void cancelOrderWithWrongStatus() {
-
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"InProgress"}, mode = EnumSource.Mode.EXCLUDE)
+        public void cancelOrderWithWrongStatus(OrderStatus orderStatus) {
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
-            Order order = Order.builder().client(client).status(OrderStatus.Cancelled).line(orderLine).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
             orderLine.setOrder(order);
             var id = orderRepository.save(order).getId();
 
@@ -372,7 +372,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void completeOrderSuccesfully() {
-
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order order = Order.builder().client(client).status(OrderStatus.InProgress).line(orderLine).build();
@@ -389,7 +388,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void completeNonExistingOrder() {
-
             //given
             var id = 80085;
 
@@ -400,12 +398,12 @@ public class OrderServiceIntegrationTests {
 
         }
 
-        @Test
-        public void completelOrderWithWrongStatus() {
-
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"InProgress"}, mode = EnumSource.Mode.EXCLUDE)
+        public void completeOrderWithWrongStatus(OrderStatus orderStatus) {
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
-            Order order = Order.builder().client(client).status(OrderStatus.Cancelled).line(orderLine).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
             orderLine.setOrder(order);
             var id = orderRepository.save(order).getId();
 
@@ -418,7 +416,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void submitOrderSuccesfully() {
-
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
             Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
@@ -435,7 +432,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void submitNonExistingOrder() {
-
             //given
             var id = 80085;
 
@@ -446,12 +442,12 @@ public class OrderServiceIntegrationTests {
 
         }
 
-        @Test
-        public void submitOrderWithWrongStatus() {
-
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"New"}, mode = EnumSource.Mode.EXCLUDE)
+        public void submitOrderWithWrongStatus(OrderStatus orderStatus) {
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
-            Order order = Order.builder().client(client).status(OrderStatus.InProgress).line(orderLine).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
             orderLine.setOrder(order);
             var id = orderRepository.save(order).getId();
 
@@ -464,7 +460,6 @@ public class OrderServiceIntegrationTests {
 
         @Test
         public void submitOrderWithNotEnoughStock() {
-
             //given
             OrderLine orderLine = OrderLine.builder().product(product).quantity(2137).build();
             Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
