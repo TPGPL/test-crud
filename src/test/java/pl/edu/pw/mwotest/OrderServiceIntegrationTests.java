@@ -2,6 +2,8 @@ package pl.edu.pw.mwotest;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -322,8 +324,148 @@ public class OrderServiceIntegrationTests {
 
     @Nested
     @org.junit.jupiter.api.Order(4)
-    class OrderFlowTests {
-        // Tests for submit, cancel and complete methods of OrderService
-        // Masa's code goes here
+    class OrderFlowTests extends OrderTestBase{
+
+        @Test
+        public void cancelOrderSuccesfully() {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(OrderStatus.InProgress).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when
+            orderService.cancelOrder(id);
+
+            //then
+            assertEquals(OrderStatus.Cancelled, orderService.getOrder(id).getStatus());
+            var updatedProduct = productService.getProduct(product.getId());
+            assertEquals(product.getStockQuantity() + 10, updatedProduct.getStockQuantity());
+        }
+
+        @Test
+        public void cancelNonExistingOrder() {
+            //given
+            var id = 80085;
+
+            //when /then
+            assertThatThrownBy(() -> orderService.cancelOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to cancel does not exist.");
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"InProgress"}, mode = EnumSource.Mode.EXCLUDE)
+        public void cancelOrderWithWrongStatus(OrderStatus orderStatus) {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when /then
+            assertThatThrownBy(() -> orderService.cancelOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to cancel is in wrong state: " + orderService.getOrder(id).getStatus());
+        }
+
+        @Test
+        public void completeOrderSuccesfully() {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(OrderStatus.InProgress).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when
+            orderService.completeOrder(id);
+
+            //then
+            assertEquals(OrderStatus.Completed, orderService.getOrder(id).getStatus());
+        }
+
+        @Test
+        public void completeNonExistingOrder() {
+            //given
+            var id = 80085;
+
+            //when /then
+            assertThatThrownBy(() -> orderService.completeOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to complete does not exist.");
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"InProgress"}, mode = EnumSource.Mode.EXCLUDE)
+        public void completeOrderWithWrongStatus(OrderStatus orderStatus) {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when /then
+            assertThatThrownBy(() -> orderService.completeOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to complete is in wrong state: " + orderService.getOrder(id).getStatus());
+        }
+
+        @Test
+        public void submitOrderSuccesfully() {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when
+            orderService.submitOrder(id);
+
+            //then
+            assertEquals(OrderStatus.InProgress, orderService.getOrder(id).getStatus());
+            var updatedProduct = productService.getProduct(product.getId());
+            assertEquals(product.getStockQuantity() - 10, updatedProduct.getStockQuantity());
+        }
+
+        @Test
+        public void submitNonExistingOrder() {
+            //given
+            var id = 80085;
+
+            //when /then
+            assertThatThrownBy(() -> orderService.submitOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to submit does not exist.");
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names ={"New"}, mode = EnumSource.Mode.EXCLUDE)
+        public void submitOrderWithWrongStatus(OrderStatus orderStatus) {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(10).build();
+            Order order = Order.builder().client(client).status(orderStatus).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when /then
+            assertThatThrownBy(() -> orderService.submitOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Given order to submit is in wrong state: " + orderService.getOrder(id).getStatus());
+        }
+
+        @Test
+        public void submitOrderWithNotEnoughStock() {
+            //given
+            OrderLine orderLine = OrderLine.builder().product(product).quantity(2137).build();
+            Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
+            orderLine.setOrder(order);
+            var id = orderRepository.save(order).getId();
+
+            //when /then
+            assertThatThrownBy(() -> orderService.submitOrder(id))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .withFailMessage("Product id %d has not enough stock to complete order.", product.getId());
+        }
+
     }
 }
