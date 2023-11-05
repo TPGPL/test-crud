@@ -339,7 +339,8 @@ public class OrderServiceIntegrationTests {
 
             //then
             assertEquals(OrderStatus.Cancelled, orderService.getOrder(id).getStatus());
-
+            var updatedProduct = productService.getProduct(product.getId());
+            assertEquals(product.getStockQuantity() + 10, updatedProduct.getStockQuantity());
         }
 
         @Test
@@ -351,7 +352,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.cancelOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to cancel does not exist.");
-
         }
 
         @ParameterizedTest
@@ -367,7 +367,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.cancelOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to cancel is in wrong state: " + orderService.getOrder(id).getStatus());
-
         }
 
         @Test
@@ -383,7 +382,6 @@ public class OrderServiceIntegrationTests {
 
             //then
             assertEquals(OrderStatus.Completed, orderService.getOrder(id).getStatus());
-
         }
 
         @Test
@@ -395,7 +393,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.completeOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to complete does not exist.");
-
         }
 
         @ParameterizedTest
@@ -411,7 +408,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.completeOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to complete is in wrong state: " + orderService.getOrder(id).getStatus());
-
         }
 
         @Test
@@ -427,7 +423,8 @@ public class OrderServiceIntegrationTests {
 
             //then
             assertEquals(OrderStatus.InProgress, orderService.getOrder(id).getStatus());
-
+            var updatedProduct = productService.getProduct(product.getId());
+            assertEquals(product.getStockQuantity() - 10, updatedProduct.getStockQuantity());
         }
 
         @Test
@@ -439,7 +436,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.submitOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to submit does not exist.");
-
         }
 
         @ParameterizedTest
@@ -455,7 +451,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.submitOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Given order to submit is in wrong state: " + orderService.getOrder(id).getStatus());
-
         }
 
         @Test
@@ -470,7 +465,6 @@ public class OrderServiceIntegrationTests {
             assertThatThrownBy(() -> orderService.submitOrder(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .withFailMessage("Product id %d has not enough stock to complete order.", product.getId());
-
         }
 
     }
