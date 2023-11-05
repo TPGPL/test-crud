@@ -154,7 +154,7 @@ public class ClientServiceIntegrationTests {
     @Order(2)
     class CreateConstraintsTests extends ClientTestBase {
         @ParameterizedTest
-        @ValueSource(strings = {"a", STR_50+"a"})
+        @ValueSource(strings = {"a", STR_50 + "a"})
         @NullSource
         public void testCreateClientWithInvalidName(String name) {
             Client client = Client.builder().name(name).surname("ValidSurname").email("valid@example.com").build();
