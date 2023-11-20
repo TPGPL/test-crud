@@ -141,33 +141,6 @@ public class OrderService {
         repository.deleteById(id);
     }
 
-    public Order mapFromDto(OrderDto dto) {
-        if (dto == null) return null;
-
-        Order order = new Order(
-                -1,
-                clientService.getClient(dto.getClientId()),
-                OrderStatus.New,
-                new ArrayList<>());
-
-        List<OrderLineDto> dtoLines = dto.getLines();
-
-        if (dtoLines != null) {
-            for (var dtoLine : dtoLines) {
-                if (dtoLine == null) continue;
-
-                order.getLines().add(new OrderLine(
-                        -1,
-                        productService.getProduct(dtoLine.getProductId()),
-                        order,
-                        dtoLine.getQuantity()
-                ));
-            }
-        }
-
-        return order;
-    }
-
     private void checkForDuplicateOrderLines(Order order) {
         Set<Integer> productIds = new HashSet<>();
 
