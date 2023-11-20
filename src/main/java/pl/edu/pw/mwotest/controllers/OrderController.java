@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.mwotest.dtos.OrderDto;
+import pl.edu.pw.mwotest.models.Order;
 import pl.edu.pw.mwotest.services.OrderService;
 
 import java.util.ArrayList;
@@ -18,28 +19,28 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public OrderDto get(@PathVariable int id) {
-        return OrderDto.mapToDto(service.getOrder(id));
+    public Order get(@PathVariable int id) {
+        return service.getOrder(id);
     }
 
 
     @GetMapping("/orders")
-    public List<OrderDto> getAll() {
-        List<OrderDto> orders = new ArrayList<>();
+    public List<Order> getAll() {
+        List<Order> orders = new ArrayList<>();
 
-        service.getAllOrders().forEach((x) -> orders.add(OrderDto.mapToDto(x)));
+        service.getAllOrders().forEach(orders::add);
 
         return orders;
     }
 
     @PostMapping("/orders")
-    public OrderDto create(@RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.createOrder(service.mapFromDto(dto)));
+    public Order create(@RequestBody OrderDto dto) {
+        return service.createOrder(service.mapFromDto(dto));
     }
 
     @PatchMapping("/orders/{id}")
-    public OrderDto update(@PathVariable int id, @RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.updateOrder(id, service.mapFromDto(dto)));
+    public Order update(@PathVariable int id, @RequestBody OrderDto dto) {
+        return service.updateOrder(id, service.mapFromDto(dto));
     }
 
     @DeleteMapping("/orders/{id}")

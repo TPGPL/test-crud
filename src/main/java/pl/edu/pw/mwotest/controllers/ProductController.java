@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.mwotest.dtos.ProductDto;
+import pl.edu.pw.mwotest.models.Product;
 import pl.edu.pw.mwotest.services.ProductService;
 
 import java.util.ArrayList;
@@ -18,27 +19,27 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ProductDto create(@RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.createProduct(service.mapFromDto(dto)));
+    public Product create(@RequestBody ProductDto dto) {
+        return service.createProduct(service.mapFromDto(dto));
     }
 
     @GetMapping("/products")
-    public List<ProductDto> getAll() {
-        List<ProductDto> products = new ArrayList<>();
+    public List<Product> getAll() {
+        List<Product> products = new ArrayList<>();
 
-        service.getAllProducts().forEach((x) -> products.add(ProductDto.mapToDto(x)));
+        service.getAllProducts().forEach(products::add);
 
         return products;
     }
 
     @GetMapping("/products/{id}")
-    public ProductDto get(@PathVariable int id) {
-        return ProductDto.mapToDto(service.getProduct(id));
+    public Product get(@PathVariable int id) {
+        return service.getProduct(id);
     }
 
     @PatchMapping("/products/{id}")
-    public ProductDto update(@PathVariable int id, @RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.updateProduct(id, service.mapFromDto(dto)));
+    public Product update(@PathVariable int id, @RequestBody ProductDto dto) {
+        return service.updateProduct(id, service.mapFromDto(dto));
     }
 
     @DeleteMapping("/products/{id}")

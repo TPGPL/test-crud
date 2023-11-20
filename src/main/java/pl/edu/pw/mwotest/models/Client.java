@@ -1,6 +1,6 @@
 package pl.edu.pw.mwotest.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -41,7 +41,7 @@ public class Client {
     @Column(unique = true, nullable = false)
     private String email;
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Order> orders = new ArrayList<>();
 
     @Override

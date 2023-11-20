@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.mwotest.dtos.ClientDto;
+import pl.edu.pw.mwotest.models.Client;
 import pl.edu.pw.mwotest.services.ClientService;
 
 import java.util.ArrayList;
@@ -18,27 +19,27 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public ClientDto create(@RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.createClient(service.mapFromDto(clientDto)));
+    public Client create(@RequestBody ClientDto clientDto) {
+        return service.createClient(service.mapFromDto(clientDto));
     }
 
     @GetMapping("/clients")
-    public List<ClientDto> getAll() {
-        List<ClientDto> clients = new ArrayList<>();
+    public List<Client> getAll() {
+        List<Client> clients = new ArrayList<>();
 
-        service.getAllClients().forEach((x) -> clients.add(ClientDto.mapToDto(x)));
+        service.getAllClients().forEach(clients::add);
 
         return clients;
     }
 
     @GetMapping("/clients/{id}")
-    public ClientDto get(@PathVariable int id) {
-        return ClientDto.mapToDto(service.getClient(id));
+    public Client get(@PathVariable int id) {
+        return service.getClient(id);
     }
 
     @PatchMapping("/clients/{id}")
-    public ClientDto update(@PathVariable int id, @RequestBody ClientDto clientDto) {
-        return ClientDto.mapToDto(service.updateClient(id, service.mapFromDto(clientDto)));
+    public Client update(@PathVariable int id, @RequestBody ClientDto clientDto) {
+        return service.updateClient(id, service.mapFromDto(clientDto));
     }
 
     @DeleteMapping("/clients/{id}")

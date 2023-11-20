@@ -1,11 +1,9 @@
 package pl.edu.pw.mwotest.models;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -28,14 +26,12 @@ public class Order {
     @NotNull(message = "The order client must not be null.")
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
-    @JsonBackReference
+    @JsonManagedReference
     private Client client;
     @NotNull(message = "The order status must not be null.")
     @Enumerated(value = EnumType.ORDINAL)
     private OrderStatus status;
     @Valid
-    @NotNull(message = "The order lines must not be null.")
-    @NotEmpty(message = "The order lines must not be empty")
     @Singular(ignoreNullCollections = true)
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
