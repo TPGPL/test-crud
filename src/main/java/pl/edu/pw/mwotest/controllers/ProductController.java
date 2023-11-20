@@ -45,7 +45,11 @@ public class ProductController {
 
     @PostMapping("/create")
     public String save(@ModelAttribute Product dto) {
-        service.createProduct(dto);
+        try {
+            service.createProduct(dto);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         return "redirect:/products";
     }
@@ -62,7 +66,11 @@ public class ProductController {
 
     @PostMapping("/update/{id}")
     public String saveWithUpdate(@PathVariable int id, @ModelAttribute Product dto) {
-        service.updateProduct(id, dto);
+        try {
+            service.updateProduct(id, dto);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         return "redirect:/products";
     }
