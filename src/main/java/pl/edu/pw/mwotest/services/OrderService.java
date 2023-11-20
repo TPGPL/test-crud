@@ -5,16 +5,12 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.edu.pw.mwotest.dtos.OrderDto;
-import pl.edu.pw.mwotest.dtos.OrderLineDto;
 import pl.edu.pw.mwotest.models.Order;
 import pl.edu.pw.mwotest.models.OrderLine;
 import pl.edu.pw.mwotest.models.OrderStatus;
 import pl.edu.pw.mwotest.repositories.OrderRepository;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
