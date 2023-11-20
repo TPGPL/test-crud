@@ -1,5 +1,7 @@
 package pl.edu.pw.mwotest.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,10 +24,12 @@ public class OrderLine {
     @NotNull(message="The orderline product must not be null.")
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "product_id")
+    @JsonManagedReference
     private Product product;
     @NotNull(message="The line's order must not be null.")
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @JsonBackReference
     private Order order;
     @Positive(message = "The orderline quantity must be positive.")
     private int quantity;

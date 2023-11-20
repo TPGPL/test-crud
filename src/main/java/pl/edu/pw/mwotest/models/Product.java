@@ -1,5 +1,6 @@
 package pl.edu.pw.mwotest.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +40,7 @@ public class Product {
     @Min(value = 0, message = "The product stock quantity cannot be lower than 0.")
     private int stockQuantity;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private List<OrderLine> orderLines = new ArrayList<>();
 
     @Override
