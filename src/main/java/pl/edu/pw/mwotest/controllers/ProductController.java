@@ -1,15 +1,16 @@
 package pl.edu.pw.mwotest.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pw.mwotest.dtos.ProductDto;
 import pl.edu.pw.mwotest.models.Product;
 import pl.edu.pw.mwotest.services.ProductService;
 
 import java.util.ArrayList;
-import java.util.List;
 
-@RestController
+@Controller
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService service;
 
@@ -18,32 +19,51 @@ public class ProductController {
         this.service = service;
     }
 
-    @PostMapping("/products")
-    public Product create(@RequestBody ProductDto dto) {
-        return service.createProduct(service.mapFromDto(dto));
-    }
-
-    @GetMapping("/products")
-    public List<Product> getAll() {
-        List<Product> products = new ArrayList<>();
-
+    @GetMapping
+    public String get(Model model) {
+        var products = new ArrayList<Product>();
         service.getAllProducts().forEach(products::add);
 
-        return products;
+        model.addAttribute("products", products);
+
+        return "products/index";
     }
 
-    @GetMapping("/products/{id}")
-    public Product get(@PathVariable int id) {
-        return service.getProduct(id);
-    }
-
-    @PatchMapping("/products/{id}")
-    public Product update(@PathVariable int id, @RequestBody ProductDto dto) {
-        return service.updateProduct(id, service.mapFromDto(dto));
-    }
-
-    @DeleteMapping("/products/{id}")
-    public void delete(@PathVariable int id) {
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable int id) {
         service.deleteProduct(id);
+
+        return "redirect:/products";
+    }
+
+    @GetMapping("/create")
+    public String create(Model model) {
+        model.addAttribute("product", new Product());
+
+        return "products/create";
+    }
+
+    @PostMapping("/create")
+    public String save(@ModelAttribute Product dto) {
+        service.createProduct(dto);
+
+        return "redirect:/products";
+    }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable int id, Model model) {
+        var product = service.getProduct(id);
+
+        model.addAttribute("updateId", id);
+        model.addAttribute("product", product);
+
+        return "products/update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String saveWithUpdate(@PathVariable int id, @ModelAttribute Product dto) {
+        service.updateProduct(id, dto);
+
+        return "redirect:/products";
     }
 }
