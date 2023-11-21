@@ -20,7 +20,7 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @NotNull(message="The orderline product must not be null.")
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id")
     private Product product;
     @NotNull(message="The line's order must not be null.")
