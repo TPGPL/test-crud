@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.mwotest.dtos.ProductDto;
+import pl.edu.pw.mwotest.dtos.ServiceResponse;
 import pl.edu.pw.mwotest.services.ProductService;
 
 import java.util.ArrayList;
@@ -19,27 +20,67 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ProductDto create(@RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.createProduct(service.mapFromDto(dto)));
+    public ServiceResponse<ProductDto> create(@RequestBody ProductDto dto) {
+        try {
+            return ServiceResponse.<ProductDto>builder()
+                    .data(ProductDto.mapToDto(service.createProduct(service.mapFromDto(dto))))
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<ProductDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @GetMapping("/products")
-    public List<ProductDto> getAll() {
-        List<ProductDto> products = new ArrayList<>();
+    public ServiceResponse<List<ProductDto>> getAll() {
+        try {
+            List<ProductDto> products = new ArrayList<>();
 
-        service.getAllProducts().forEach((x) -> products.add(ProductDto.mapToDto(x)));
+            service.getAllProducts().forEach((x) -> products.add(ProductDto.mapToDto(x)));
 
-        return products;
+            return ServiceResponse.<List<ProductDto>>builder()
+                    .data(products)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<List<ProductDto>>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @GetMapping("/products/{id}")
-    public ProductDto get(@PathVariable int id) {
-        return ProductDto.mapToDto(service.getProduct(id));
+    public ServiceResponse<ProductDto> get(@PathVariable int id) {
+        try {
+            return ServiceResponse.<ProductDto>builder()
+                    .data(ProductDto.mapToDto(service.getProduct(id)))
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<ProductDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PatchMapping("/products/{id}")
-    public ProductDto update(@PathVariable int id, @RequestBody ProductDto dto) {
-        return ProductDto.mapToDto(service.updateProduct(id, service.mapFromDto(dto)));
+    public ServiceResponse<ProductDto> update(@PathVariable int id, @RequestBody ProductDto dto) {
+        try {
+            return ServiceResponse.<ProductDto>builder()
+                    .data(ProductDto.mapToDto(service.updateProduct(id, service.mapFromDto(dto))))
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<ProductDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @DeleteMapping("/products/{id}")
