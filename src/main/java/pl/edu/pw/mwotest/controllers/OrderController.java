@@ -3,6 +3,7 @@ package pl.edu.pw.mwotest.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.mwotest.dtos.OrderDto;
+import pl.edu.pw.mwotest.dtos.ServiceResponse;
 import pl.edu.pw.mwotest.services.OrderService;
 
 import java.util.ArrayList;
@@ -19,28 +20,68 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public OrderDto get(@PathVariable int id) {
-        return OrderDto.mapToDto(service.getOrder(id));
+    public ServiceResponse<OrderDto> get(@PathVariable int id) {
+        try {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(true)
+                    .data(OrderDto.mapToDto(service.getOrder(id)))
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
 
     @GetMapping("/orders")
-    public List<OrderDto> getAll() {
-        List<OrderDto> orders = new ArrayList<>();
+    public ServiceResponse<List<OrderDto>> getAll() {
+        try {
+            List<OrderDto> orders = new ArrayList<>();
 
-        service.getAllOrders().forEach((x) -> orders.add(OrderDto.mapToDto(x)));
+            service.getAllOrders().forEach((x) -> orders.add(OrderDto.mapToDto(x)));
 
-        return orders;
+            return ServiceResponse.<List<OrderDto>>builder()
+                    .data(orders)
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<List<OrderDto>>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PostMapping("/orders")
-    public OrderDto create(@RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.createOrder(service.mapFromDto(dto)));
+    public ServiceResponse<OrderDto> create(@RequestBody OrderDto dto) {
+        try {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(true)
+                    .data(OrderDto.mapToDto(service.createOrder(service.mapFromDto(dto))))
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PatchMapping("/orders/{id}")
-    public OrderDto update(@PathVariable int id, @RequestBody OrderDto dto) {
-        return OrderDto.mapToDto(service.updateOrder(id, service.mapFromDto(dto)));
+    public ServiceResponse<OrderDto> update(@PathVariable int id, @RequestBody OrderDto dto) {
+        try {
+            return ServiceResponse.<OrderDto>builder()
+                    .data(OrderDto.mapToDto(service.updateOrder(id, service.mapFromDto(dto))))
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @DeleteMapping("/orders/{id}")
@@ -49,18 +90,51 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{id}/cancel")
-    public void cancel(@PathVariable int id) {
-        service.cancelOrder(id);
+    public ServiceResponse<OrderDto> cancel(@PathVariable int id) {
+        try {
+            service.cancelOrder(id);
+
+            return ServiceResponse.<OrderDto>builder()
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PutMapping("/orders/{id}/submit")
-    public void submit(@PathVariable int id) {
-        service.submitOrder(id);
+    public ServiceResponse<OrderDto> submit(@PathVariable int id) {
+        try {
+            service.submitOrder(id);
+
+            return ServiceResponse.<OrderDto>builder()
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PutMapping("/orders/{id}/complete")
-    public void complete(@PathVariable int id) {
-        service.completeOrder(id);
+    public ServiceResponse<OrderDto> complete(@PathVariable int id) {
+        try {
+            service.completeOrder(id);
+
+            return ServiceResponse.<OrderDto>builder()
+                    .success(true)
+                    .build();
+        } catch (Exception e) {
+            return ServiceResponse.<OrderDto>builder()
+                    .success(false)
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
 }
