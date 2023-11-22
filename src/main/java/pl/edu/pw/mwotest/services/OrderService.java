@@ -74,7 +74,7 @@ public class OrderService {
 
         checkForDuplicateOrderLines(order);
 
-        return repository.save(orderToUpdate);
+        return repository.save(order);
     }
 
     public void submitOrder(int id) {
