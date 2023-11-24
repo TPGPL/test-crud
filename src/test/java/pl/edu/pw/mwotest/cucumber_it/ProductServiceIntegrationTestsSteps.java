@@ -131,4 +131,50 @@ public class ProductServiceIntegrationTestsSteps {
     public void productIsNull() {
         assertThat(product).isNull();
     }
+
+    @When("I read product")
+    public void iReadProduct() {
+        productService.getProduct(requestedId);
+    }
+
+    @Then("I should see product data as below")
+    public void iShouldSeeProductDataAsBelow(List<Map<String, String>> data) {
+        assertThat(product).isNotNull();
+        assertThat(product.getName()).isEqualTo(proxyBlank(data.get(0).get("name")));
+        assertThat(product.getPrice()).isEqualTo(proxyZero(data.get(0).get("price"), Double.class).doubleValue());
+        assertThat(product.getStockQuantity()).isEqualTo(proxyZero(data.get(0).get("stockQuantity"), Integer.class).intValue());
+    }
+
+    @When("I update product by id")
+    public void iUpdateProductById() {
+        actionToCall = () -> productService.updateProduct(
+                requestedId, Product.builder().name("NewName").price(102.0).stockQuantity(1).build()
+        );
+    }
+
+    @Then("product not found exception is thrown")
+    public void productNotFoundExceptionIsThrown() {
+        assertThatThrownBy(actionToCall).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @When("I update product with data below")
+    public void iUpdateProductWithDataBelow(List<Map<String, String>> data) {
+        String upName = proxyBlank(data.get(0).get("name"));
+        double upPrice = proxyZero(data.get(0).get("price"), Double.class).doubleValue();
+        int upStockQuantity = proxyZero(data.get(0).get("stockQuantity"), Integer.class).intValue();
+
+        product = productService.updateProduct(
+                requestedId, Product.builder().name(upName).price(upPrice).stockQuantity(upStockQuantity).build()
+        );
+    }
+
+    @When("I delete product")
+    public void iDeleteProduct() {
+        productService.deleteProduct(requestedId);
+    }
+
+    @Then("product is not in database anymore")
+    public void productIsNotInDatabaseAnymore() {
+        assertThat(productService.getProduct(requestedId)).isNull();
+    }
 }
