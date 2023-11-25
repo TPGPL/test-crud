@@ -74,4 +74,8 @@ public class ProductService {
                 new ArrayList<>()
         ) : null;
     }
+
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

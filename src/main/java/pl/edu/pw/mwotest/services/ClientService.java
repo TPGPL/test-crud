@@ -75,4 +75,8 @@ public class ClientService {
                 new ArrayList<>()
         ) : null;
     }
+
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

@@ -19,9 +19,8 @@ import java.util.stream.StreamSupport;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-
 @RequiredArgsConstructor
-public class ClientServiceIntegrationTestsSteps extends SpringIntegrationCucumberTests {
+public class ClientServiceIntegrationTestsSteps {
     private static Client client;
     private static ThrowableAssert.ThrowingCallable actionToCall;
     private static int requestedId;

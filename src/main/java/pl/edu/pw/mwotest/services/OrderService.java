@@ -74,7 +74,7 @@ public class OrderService {
 
         checkForDuplicateOrderLines(order);
 
-        return repository.save(orderToUpdate);
+        return repository.save(order);
     }
 
     public void submitOrder(int id) {
@@ -178,5 +178,9 @@ public class OrderService {
         if (productIds.size() != order.getLines().size()) {
             throw new IllegalArgumentException("Duplicate product lines in order.");
         }
+    }
+
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }
