@@ -112,8 +112,9 @@ public class ClientServiceIntegrationTests {
         @Test
         public void updateClientSuccessful() {
             // given
+            Client oldClient = Client.builder().name("name").surname("surname").email("old@email.com").build();
             Client client = Client.builder().name("new name").surname("new surname").email("new@email.com").build();
-            var id = clientRepository.save(client).getId();
+            var id = clientRepository.save(oldClient).getId();
 
             // when
             clientService.updateClient(id, client);
