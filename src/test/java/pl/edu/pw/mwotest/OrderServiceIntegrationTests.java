@@ -135,6 +135,8 @@ public class OrderServiceIntegrationTests {
             Order order = Order.builder().client(client).status(OrderStatus.New).line(orderLine).build();
             orderLine.setOrder(order);
             var id = orderRepository.save(order).getId();
+            
+            order.setStatus(OrderStatus.InProgress);
 
             // when
             orderService.updateOrder(id, order);
@@ -142,7 +144,7 @@ public class OrderServiceIntegrationTests {
             // then
             Order retrievedOrder = orderRepository.findById(id).orElse(null);
             assertNotNull(retrievedOrder);
-            assertEquals(order.getStatus(), retrievedOrder.getStatus());
+            assertEquals(OrderStatus.InProgress, retrievedOrder.getStatus());
             assertEquals(order.getClient(), retrievedOrder.getClient());
             assertIterableEquals(order.getLines(), retrievedOrder.getLines());
         }
