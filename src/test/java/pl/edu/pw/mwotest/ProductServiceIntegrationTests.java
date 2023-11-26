@@ -105,8 +105,9 @@ public class ProductServiceIntegrationTests {
         @Test
         public void updateProductSuccessful() {
             // given
-            Product product = Product.builder().name("Piwo").price(0.99).stockQuantity(0).build();
-            var id = productRepository.save(product).getId();
+            Product oldProduct = Product.builder().name("Radler").price(21.36).stockQuantity(0).build();
+            Product product = Product.builder().name("Piwo").price(0.99).stockQuantity(10).build();
+            var id = productRepository.save(oldProduct).getId();
 
             // when
             productService.updateProduct(id, product);
